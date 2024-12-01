@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: squid-volume
+  namespace: squid
+spec:
+  capacity:
+    storage: 4Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: /data/squid/debuglog/
+  claimRef:
+    name: squid-claim
+    namespace: squid
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: squid-claim
+  namespace: squid
+spec:
+  volumeName: squid-volume
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 4Gi

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: squid
+  namespace: squid
+  labels:
+    name: squid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: squid
+  template:
+    metadata:
+      labels:
+        app: squid
+    spec:
+      volumes:
+        - name: squid-volume
+          persistentVolumeClaim:
+            claimName: squid-claim
+
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      containers:
+        - name: squid
+          image: squid:IMAGE_PLACEHOLDER
+          imagePullPolicy: Never
+          volumeMounts:
+            - mountPath: /var/log/squid
+              name: squid-volume
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "1"
