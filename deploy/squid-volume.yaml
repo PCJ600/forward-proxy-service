@@ -9,7 +9,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: /data/squid/debuglog/
+    path: /data/squidlog/ # 指定宿主机路径
   claimRef:
     name: squid-claim
     namespace: squid

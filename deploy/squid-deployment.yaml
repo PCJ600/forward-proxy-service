@@ -1,4 +1,4 @@
-apiVersion: apps/v1
+piVersion: apps/v1
 kind: Deployment
 metadata:
   name: squid
@@ -19,17 +19,15 @@ spec:
         - name: squid-volume
           persistentVolumeClaim:
             claimName: squid-claim
-
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       containers:
         - name: squid
           image: squid:IMAGE_PLACEHOLDER
-          imagePullPolicy: Never
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: "4Gi"
           volumeMounts:
-            - mountPath: /var/log/squid
+            - mountPath: /var/log/squid # 指定Pod中Squid日志路径
               name: squid-volume
-      dnsConfig:
-        options:
-          - name: ndots
-            value: "1"
