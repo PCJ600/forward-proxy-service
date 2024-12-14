@@ -6,7 +6,12 @@ IMAGE_TAG=$1
 mkdir -p output/
 
 docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f Dockerfile .
+if [ $? -ne 0 ]; then
+    echo "Docker image build fail, exit"
+    exit 1
+fi
 
+rm -rf output/*
 docker save ${IMAGE_NAME}:${IMAGE_TAG} > output/${IMAGE_NAME}-${IMAGE_TAG}.tar
 cp -r deploy/ output/
 sed -i "s/IMAGE_PLACEHOLDER/${IMAGE_TAG}/g" output/deploy/squid-deployment.yaml
