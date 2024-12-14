@@ -25,6 +25,12 @@ spec:
         - name: squid
           image: squid:IMAGE_PLACEHOLDER
           imagePullPolicy: IfNotPresent
+          livenessProbe:
+            exec:
+              command: ["squid","-k","check"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
           resources:
             limits:
               memory: "4Gi"
