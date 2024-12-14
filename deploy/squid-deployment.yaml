@@ -19,6 +19,9 @@ spec:
         - name: squid-volume
           persistentVolumeClaim:
             claimName: squid-claim
+        - name: squid-config-volume
+          configMap:
+            name: squid-configmap
       dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       containers:
@@ -36,5 +39,7 @@ spec:
             limits:
               memory: "4Gi"
           volumeMounts:
-            - mountPath: /var/log/squid # 指定Pod中Squid日志路径
+            - mountPath: /var/log/squid
               name: squid-volume
+            - mountPath: /etc/squid-config # 指定configmap volume的目录
+              name: squid-config-volume

@@ -4,4 +4,5 @@ metadata:
   name: squid-configmap
   namespace: squid
 data:
-  whitelist: "www.baidu.com"
+  whitelist: "www.baidu.com,www.google.com"
+  customerProxy: "192.168.52.204:3128"
