@@ -6,18 +6,13 @@ import time
 import threading
 import copy
 import os
-from queue import Queue
+import logging_config
 
-# Logging
-import logging
-logger = logging.getLogger(__name__)
-file_handler = logging.FileHandler('/var/log/squid/agent.log')
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-file_handler.setFormatter(formatter)
-logger.addHandler(file_handler)
-logger.setLevel(logging.DEBUG)
+from queue import Queue
+from reload_squid import reload_squid_if_needed
 
 # Global Variables
+logger = logging_config.logger
 g_agent = None
 
 # Flask App
@@ -53,6 +48,7 @@ def run_flask_app():
     app.run(host='0.0.0.0', port=5000)
 
 
+
 class Agent():
     def __init__(self):
         self.configMap = {}
@@ -68,7 +64,7 @@ class Agent():
     # read config from ConfigMap Volume, then load it to memory
     def updateConfigMap(self):
         latest_conf = {}
-        keys = ["whitelist", "customerProxy"]
+        keys = ["whitelist", "whitelistFlag", "customerProxy"]
         for k in keys:
             file_path = '/etc/squid-config/{}'.format(k)
             if os.path.exists(file_path) == False:
@@ -91,7 +87,10 @@ class Agent():
     def process_config_change(self):
         while True:
             item = self.Q['config_change'].get()
-            logger.info('receive config change message %r, TODO update squid conf', item)
+            conf = self.getConfigMap()
+            logger.info('receive config change message, lastest conf: %r', conf)
+
+            reload_squid_if_needed(conf)
 
     def start(self):
         logger.info("Agent Started")

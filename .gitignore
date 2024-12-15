@@ -1,1 +1,3 @@
 *.tar
+output
+*.tar.gz
