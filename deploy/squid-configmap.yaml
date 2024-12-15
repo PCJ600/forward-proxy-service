@@ -6,4 +6,5 @@ metadata:
 data:
   whitelist: "www.baidu.com,www.google.com"
   whitelistFlag: "on"
-  customerProxy: "192.168.52.204:3128"
+  proxyHost: "192.168.52.204"
+  proxyPort: "3128"

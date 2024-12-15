@@ -29,7 +29,8 @@ def get_squid_conf_from_host_conf(host_conf):
     conf = SquidConf()
     conf.whitelist_flag = host_conf.get("whitelistFlag")
     conf.whitelist = host_conf.get("whitelist")
-    # TODO: parse UpstreamProxy
+    conf.upstream_proxy.host = host_conf.get("proxyHost")
+    conf.upstream_proxy.port = host_conf.get("proxyPort")
     return conf
 
 
@@ -97,12 +98,26 @@ def update_whitelist_to_squid_conf(whitelist_str, whitelist_flag):
         logger.error("update whitelist exception, traceback: %r", traceback.format_exc())
 
 
+def update_upstream_proxy_to_squid_conf(upstream_proxy):
+    login_str = ''
+    if upstream_proxy.user != "" and upstream_proxy.passwd != "":
+        login_str = 'login={u}:{p}'.format(u=upstream_proxy.user, p=upstream_proxy.passwd)		
+
+    cmd = '''sed -i '$a\\cache_peer {host} parent {port} 0 no-query default {login_str}' {cfg_path}; \
+             sed -i '$a\\never_direct allow all' {cfg_path}; \
+          '''.format(host=upstream_proxy.host, port=upstream_proxy.port, cfg_path=SQUID_CONF_PATH, login_str=login_str)
+    ret = os.system(cmd)
+    logger.info("update squid conf, ret: %r", ret)
+    
+
 def update_squid_conf(latest_squid_conf):
     whitelist = latest_squid_conf.whitelist
     whitelist_flag = latest_squid_conf.whitelist_flag
-    logger.info("ready to update squid conf, whitelist_flag: %r, whitelist: %r", whitelist_flag, whitelist)
+    upstream_proxy = latest_squid_conf.upstream_proxy
+    logger.info("ready to update squid conf, whitelist_flag: %r, whitelist: %r, upstream_proxy: %r", whitelist_flag, whitelist, upstream_proxy)
+
     update_whitelist_to_squid_conf(whitelist, whitelist_flag)
-    # TODO: update upstream proxy
+    update_upstream_proxy_to_squid_conf(upstream_proxy)
 
 
 def restart_squid():

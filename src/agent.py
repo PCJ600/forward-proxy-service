@@ -64,7 +64,7 @@ class Agent():
     # read config from ConfigMap Volume, then load it to memory
     def updateConfigMap(self):
         latest_conf = {}
-        keys = ["whitelist", "whitelistFlag", "customerProxy"]
+        keys = ["whitelist", "whitelistFlag", "proxyHost", "proxyPort"]
         for k in keys:
             file_path = '/etc/squid-config/{}'.format(k)
             if os.path.exists(file_path) == False:

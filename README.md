@@ -56,7 +56,9 @@ curl -x peter:47ae7e2352e92154c82669de2a99dd2091e60faa@192.168.52.200:3128 https
 curl -x peter:47ae7e2352e92154c82669de2a99dd2091e60faa@192.168.52.200:3128 https://www.baidu.com -i
 ```
 * upstream proxy
+return 503 if upstream proxy not works
 ```
-```
+curl -x localhost:3128 https://www.baidu.com -i
+
 * stunnel
 * cache
